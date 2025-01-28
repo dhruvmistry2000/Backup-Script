@@ -5,6 +5,7 @@ SOURCE_DIR="/home/dhruv/Github/myneovim"    # Where to backup from
 BACKUP_DIR="/home/dhruv/Document"          # Where to store backups locally  
 REMOTE_NAME="gdrive"                       # rclone remote name
 REMOTE_DIR="/backup"                       # Remote backup folder
+LOG_DIR="/var/log/backup"                  # Log directory
 
 # How many days of backups to keep
 DAYS_TO_KEEP=7
@@ -41,6 +42,12 @@ check_prerequisites() {
         mkdir -p "$BACKUP_DIR"
     fi
 
+    # Create log directory if needed
+    if [ ! -d "$LOG_DIR" ]; then
+        sudo mkdir -p "$LOG_DIR"
+        sudo chown $USER:$USER "$LOG_DIR"
+    fi
+
     # Setup backup file names
     MONTH=$(date +%B_%Y)
     TIMESTAMP=$(date +%H%M%S_%d%m%Y)
@@ -58,7 +65,7 @@ check_prerequisites() {
 backup() {
     # Create local backup
     echo "Starting backup..."
-    zip -r "${MONTH_DIR}/${BACKUP_FILE}" "$SOURCE_DIR" > local.log
+    zip -r "${MONTH_DIR}/${BACKUP_FILE}" "$SOURCE_DIR" > "${LOG_DIR}/local.log" 2>&1
     if [ $? -eq 0 ]; then
         echo "Backup done: ${MONTH_DIR}/${BACKUP_FILE}"
     else
@@ -68,7 +75,7 @@ backup() {
 
     # Copy to remote storage
     echo "Copying to remote storage..."
-    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/${MONTH}" > remote.log
+    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/${MONTH}" > "${LOG_DIR}/remote.log" 2>&1
     if [ $? -eq 0 ]; then
         echo "Remote copy done!"
     else
@@ -112,7 +119,7 @@ delete_backups() {
     # Delete old remote backups
     rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
         --min-age "${DAYS_TO_KEEP}d" \
-        --include "backup_*" > remote_cleanup.log
+        --include "backup_*" > "${LOG_DIR}/remote_cleanup.log" 2>&1
 
     if [ $? -eq 0 ]; then
         echo "Remote cleanup done!"
