@@ -117,6 +117,10 @@ delete_backups() {
     rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
         --min-age "${DAYS_TO_KEEP}d" \
         --include "backup_*" > "/var/log/backup/remote_cleanup.log" 2>&1
+    
+    rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
+        --max-age "90d" \
+        --include "backup_*" > "/var/log/backup/remote_cleanup.log" 2>&1
 
     if [ $? -eq 0 ]; then
         echo "Remote cleanup done!"
