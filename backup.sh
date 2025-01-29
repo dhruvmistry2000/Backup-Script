@@ -72,7 +72,7 @@ backup() {
 
     # Copy to remote storage
     echo "Copying to remote storage..."
-    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/${MONTH}" > "/var/log/backup/remote.log" 2>&1
+    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/$MONTH" > "/var/log/backup/remote.log" 2>&1
     if [ $? -eq 0 ]; then
         echo "Remote copy done!"
     else
