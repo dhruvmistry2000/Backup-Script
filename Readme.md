@@ -7,7 +7,7 @@ The `backup.sh` script helps you automatically save a folder you choose to both 
 ```bash
 git clone https://github.com/dhruvmistry2000/Project1.git
 ```
-1) Install zip on you server.
+2) Install zip on you server.
 For Ubuntu Server
 ```bash
 sudo apt install -y zip
@@ -20,7 +20,7 @@ For RHEL Server
 ```bash
 sudo dnf install -y zip
 ```
-2) Before running the script, you need to configure the following variables at the top of the script:
+3) Before running the script, you need to configure the following variables at the top of the script:
 
 - `SOURCE_DIR`: The directory you want to back up.
 - `BACKUP_DIR`: The local directory where backups will be stored.
@@ -28,8 +28,8 @@ sudo dnf install -y zip
 - `REMOTE_DIR`: The directory on the remote storage where backups will be stored.
 - `DAYS_TO_KEEP`: The number of days to keep local backups before they are deleted *(By default i have set the value to 7)*.
 
-3) In the send_notification function [backup.sh](backup.sh) file change the ip address to the machines ip address.
-4) For backend confiuration refer to [Readme.md](Backend/Readme.md).
+4) In the send_notification function [backup.sh](backup.sh) file change the ip address to the machines ip address.
+5) For backend confiuration refer to [Readme.md](Backend/Readme.md).
 
 ## rclone
 
