@@ -17,7 +17,7 @@ For RHEL Server
 sudo yum install -y nginx python3 python3-venv python3-flask
 ```
 
-For RHEL Server
+For Fedora Server
 ```bash
 sudo dnf install -y nginx python3 python3-venv python3-flask
 ```
