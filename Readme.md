@@ -3,7 +3,8 @@
 The `backup.sh` script helps you automatically save a folder you choose to both your computer and a remote storage service using `rclone`. It also has features to remove old backups and to notify you when the backup is done successfully.
 
 ## Configuration
-1) Clone this repository ```bash
+1) Clone this repository 
+```bash
 git clone https://github.com/dhruvmistry2000/Project1.git
 ```
 2) Install zip on you server.
