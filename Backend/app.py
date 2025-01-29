@@ -12,8 +12,6 @@ def handle_post():
 
     # Print the received data for debugging
     print(f"Received post with project: {project}, date: {date}, test: {test}")
-
-    # Simulate processing and return the response
     return jsonify({
         'project': project,
         'date': date,
