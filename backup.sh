@@ -1,14 +1,11 @@
 #!/bin/bash
 
 # Source directory and backup directories
-SOURCE_DIR="/home/dhruv/Github/myneovim"    # Where to backup from
-BACKUP_DIR="/home/dhruv/Document"          # Where to store backups locally  
-REMOTE_NAME="gdrive"                       # rclone remote name
-REMOTE_DIR="/backup"                       # Remote backup folder
-LOG_DIR="/var/log/backup"                  # Log directory
-
-# How many days of backups to keep
-DAYS_TO_KEEP=7
+SOURCE_DIR="/path/to/source/dir"                # Where to backup from
+BACKUP_DIR="/path/to/local/backup/dir"          # Where to store backups locally  
+REMOTE_NAME="remote/drive/name"                 # rclone remote name
+REMOTE_DIR="remote/dir/path"                    # Remote backup folder           
+DAYS_TO_KEEP=7                                  # How many days of backups to keep
 
 # Function to check prerequisites and create directories
 check_prerequisites() {
@@ -30,12 +27,6 @@ check_prerequisites() {
         exit 1
     fi
 
-    # Make sure rclone exists
-    if ! command -v rclone &> /dev/null; then
-        echo "Please install rclone first!"
-        exit 1
-    fi
-
     # Create backup folder if needed
     if [ ! -d "$BACKUP_DIR" ]; then
         echo "Making backup folder: $BACKUP_DIR"
@@ -43,9 +34,9 @@ check_prerequisites() {
     fi
 
     # Create log directory if needed
-    if [ ! -d "$LOG_DIR" ]; then
-        sudo mkdir -p "$LOG_DIR"
-        sudo chown $USER:$USER "$LOG_DIR"
+    if [ ! -d "/var/log/backup" ]; then
+        sudo mkdir -p "/var/log/backup"
+        sudo chown $USER:$USER "/var/log/backup"
     fi
 
     # Setup backup file names
@@ -59,13 +50,20 @@ check_prerequisites() {
         echo "Making month folder: $MONTH_DIR"
         mkdir -p "$MONTH_DIR"
     fi
+
+    # Check if rclone is installed
+    if ! command -v rclone &> /dev/null; then
+        echo "Error: rclone is not installed. Please install rclone and configure to proceed!"
+        echo "Refer to following link https://rclone.org/downloads/"
+        exit 1
+    fi
 }
 
 # Function to perform backup operations
 backup() {
     # Create local backup
     echo "Starting backup..."
-    zip -r "${MONTH_DIR}/${BACKUP_FILE}" "$SOURCE_DIR" > "${LOG_DIR}/local.log" 2>&1
+    zip -r "${MONTH_DIR}/${BACKUP_FILE}" "$SOURCE_DIR" > "/var/log/backup/local.log" 2>&1
     if [ $? -eq 0 ]; then
         echo "Backup done: ${MONTH_DIR}/${BACKUP_FILE}"
     else
@@ -75,7 +73,7 @@ backup() {
 
     # Copy to remote storage
     echo "Copying to remote storage..."
-    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/${MONTH}" > "${LOG_DIR}/remote.log" 2>&1
+    rclone copy "${MONTH_DIR}/${BACKUP_FILE}" "$REMOTE_NAME:$REMOTE_DIR/${MONTH}" > "/var/log/backup/remote.log" 2>&1
     if [ $? -eq 0 ]; then
         echo "Remote copy done!"
     else
@@ -119,7 +117,7 @@ delete_backups() {
     # Delete old remote backups
     rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
         --min-age "${DAYS_TO_KEEP}d" \
-        --include "backup_*" > "${LOG_DIR}/remote_cleanup.log" 2>&1
+        --include "backup_*" > "/var/log/backup/remote_cleanup.log" 2>&1
 
     if [ $? -eq 0 ]; then
         echo "Remote cleanup done!"
@@ -137,7 +135,7 @@ send_notification() {
         "project": "'"$SOURCE_DIR"'",
         "date": "'"$TIMESTAMP"'",
         "test": "BackupSuccessful"
-    }' http://192.168.29.203/posts
+    }' http://<SERVER_IP_ADDRESS>/posts
 }
 
 # Main execution
