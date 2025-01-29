@@ -103,7 +103,7 @@ delete_backups() {
     done
 
     # Find and remove old month directories
-    find "$BACKUP_DIR" -q 1 -maxdepth 1 -type d | while read month_dir; do
+    find "$BACKUP_DIR" -maxdepth 1 -type d | while read month_dir; do
         dir_date=$(stat -c %Y "$month_dir")
         if [ $dir_date -lt $OLD_MONTH_DATE ]; then
             echo "Removing old month directory: $month_dir"
@@ -131,7 +131,17 @@ delete_backups() {
     echo "All done! Backup complete!"
 }
 
+# Function to send notification
+send_notification() {
+    curl -X POST -H "Content-Type: application/json" -d '{
+        "project": "'"$SOURCE_DIR"'",
+        "date": "'"$TIMESTAMP"'",
+        "test": "BackupSuccessful"
+    }' http://192.168.29.203/posts
+}
+
 # Main execution
 check_prerequisites
 backup
+send_notification
 delete_backups
