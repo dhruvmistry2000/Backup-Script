@@ -51,7 +51,6 @@ sudo nginx -t
 
 If you see the follwoing output then the confugration is ok.Else check the configuration file.
 ```bash
-nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
 ```
 
