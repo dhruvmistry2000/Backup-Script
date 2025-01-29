@@ -40,9 +40,11 @@ check_prerequisites() {
     fi
 
     # Setup backup file names
+    HOSTNAME=$(cat /etc/hostname)
     MONTH=$(date +%B_%Y)
     TIMESTAMP=$(date +%H%M%S_%d%m%Y)
-    MONTH_DIR="${BACKUP_DIR}/${MONTH}"
+    HOST_DIR="${BACKUP_DIR}/${HOSTNAME}"
+    MONTH_DIR="${HOST_DIR}/${MONTH}"
     BACKUP_FILE="backup_${TIMESTAMP}.zip"
 
     # Create month folder if needed
