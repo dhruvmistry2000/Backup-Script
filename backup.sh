@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# Source directory and backup directories
 SOURCE_DIR="/path/to/source/dir"                # Where to backup from
 BACKUP_DIR="/path/to/local/backup/dir"          # Where to store backups locally  
 REMOTE_NAME="remote/drive/name"                 # rclone remote name
 REMOTE_DIR="remote/dir/path"                    # Remote backup folder           
 DAYS_TO_KEEP=7                                  # How many days of backups to keep
 DISABLE_NOTIFICATION=false                       # Option to disable cURL request for testing
-
 # Function to check prerequisites and create directories
 check_prerequisites() {
     # Check if source directory is set
@@ -41,11 +39,9 @@ check_prerequisites() {
     fi
 
     # Setup backup file names
-    HOSTNAME=$(cat /etc/hostname)
     MONTH=$(date +%B_%Y)
     TIMESTAMP=$(date +%H%M%S_%d%m%Y)
-    HOST_DIR="${BACKUP_DIR}/${HOSTNAME}"
-    MONTH_DIR="${HOST_DIR}/${MONTH}"
+    MONTH_DIR="${BACKUP_DIR}/${MONTH}"
     BACKUP_FILE="backup_${TIMESTAMP}.zip"
 
     # Create month folder if needed
@@ -94,19 +90,19 @@ delete_backups() {
     OLD_DATE=$(date -d "$DAYS_TO_KEEP days ago" +%s)
     OLD_MONTH_DATE=$(date -d "3 months ago" +%s)
 
-    # Find and remove old backups securely
-    find "$BACKUP_DIR" -type f -name "backup_*" | while read -r backup_file; do
+    # Find and remove old backups
+    find "$BACKUP_DIR" -type f -name "backup_*" | while read backup_file; do
         file_date=$(stat -c %Y "$backup_file")
-        if [ "$file_date" -lt "$OLD_DATE" ]; then
+        if [ $file_date -lt $OLD_DATE ]; then
             echo "Removing old backup: $backup_file"
             rm -f "$backup_file"
         fi
     done
 
-    # Find and remove old month directories securely
-    find "$BACKUP_DIR" -maxdepth 1 -type d | while read -r month_dir; do
+    # Find and remove old month directories
+    find "$BACKUP_DIR" -maxdepth 1 -type d | while read month_dir; do
         dir_date=$(stat -c %Y "$month_dir")
-        if [ "$dir_date" -lt "$OLD_MONTH_DATE" ]; then
+        if [ $dir_date -lt $OLD_MONTH_DATE ]; then
             echo "Removing old month directory: $month_dir"
             rm -rf "$month_dir"
         fi
@@ -117,7 +113,7 @@ delete_backups() {
     # Clean up old remote backups
     echo "Cleaning remote backups..."
 
-    # Delete old remote backups securely
+    # Delete old remote backups
     rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
         --min-age "${DAYS_TO_KEEP}d" \
         --include "backup_*" > "/var/log/backup/remote_cleanup.log" 2>&1
@@ -141,11 +137,10 @@ send_notification() {
             "test": "BackupSuccessful"
         }' http://<SERVER_IP_ADDRESS>/posts
     else
-        echo "Notification disabled for testing."
+        echo "Notification disabled."
     fi
 }
 
-# Main execution
 check_prerequisites
 backup
 send_notification
