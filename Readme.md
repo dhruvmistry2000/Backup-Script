@@ -5,7 +5,7 @@ The `backup.sh` script helps you automatically save a folder you choose to both 
 ## Configuration
 1) Clone this repository 
 ```bash
-git clone https://github.com/dhruvmistry2000/Project1.git
+git clone https://github.com/dhruvmistry2000/Backup-Script.git
 ```
 2) Install zip on you server.
 For Ubuntu Server
