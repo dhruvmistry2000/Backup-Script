@@ -5,7 +5,7 @@ BACKUP_DIR="/path/to/local/backup/dir"          # Where to store backups locally
 REMOTE_NAME="remote/drive/name"                 # rclone remote name
 REMOTE_DIR="remote/dir/path"                    # Remote backup folder           
 DAYS_TO_KEEP=7                                  # How many days of backups to keep
-DISABLE_NOTIFICATION=false                      # Option to disable cURL request for testing
+NOTIFICATION= True                    # Option to disable cURL request for testing
 # Function to check prerequisites and create directories
 check_prerequisites() {
     # Check if source directory is set
@@ -134,7 +134,7 @@ delete_backups() {
 
 # Function to send notification
 send_notification() {
-    if [ "$DISABLE_NOTIFICATION" = false ]; then
+    if [ "NOTIFICATION" = True ]; then
         curl -X POST -H "Content-Type: application/json" -d '{
             "project": "'"$SOURCE_DIR"'",
             "date": "'"$TIMESTAMP"'",
