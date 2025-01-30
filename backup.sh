@@ -134,7 +134,7 @@ delete_backups() {
 
 # Function to send notification
 send_notification() {
-    if [ "NOTIFICATION" = True ]; then
+    if [ "$NOTIFICATION" = True ]; then
         curl -X POST -H "Content-Type: application/json" -d '{
             "project": "'"$SOURCE_DIR"'",
             "date": "'"$TIMESTAMP"'",
