@@ -5,7 +5,7 @@ BACKUP_DIR="/path/to/local/backup/dir"          # Where to store backups locally
 REMOTE_NAME="remote/drive/name"                 # rclone remote name
 REMOTE_DIR="remote/dir/path"                    # Remote backup folder           
 DAYS_TO_KEEP=7                                  # How many days of backups to keep
-NOTIFICATION= True                    # Option to disable cURL request for testing
+NOTIFICATION=true                    # Option to disable cURL request for testing
 # Function to check prerequisites and create directories
 check_prerequisites() {
     # Check if source directory is set
@@ -113,7 +113,7 @@ delete_backups() {
     # Clean up old remote backups
     echo "Cleaning remote backups..."
 
-    Delete old remote backups
+    echo "Delete old remote backups"
     rclone delete "$REMOTE_NAME:$REMOTE_DIR" \
         --min-age "${DAYS_TO_KEEP}d" \
         --include "backup_*" > "/var/log/backup/remote_cleanup.log" 2>&1
@@ -134,7 +134,7 @@ delete_backups() {
 
 # Function to send notification
 send_notification() {
-    if [ "$NOTIFICATION" = True ]; then
+    if [ "$NOTIFICATION" = true ]; then
         curl -X POST -H "Content-Type: application/json" -d '{
             "project": "'"$SOURCE_DIR"'",
             "date": "'"$TIMESTAMP"'",
